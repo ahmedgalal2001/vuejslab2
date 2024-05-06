@@ -1,5 +1,7 @@
 <template>
-  <div class="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 justify-items-center gap-6 m-2">
+  <div
+    class="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 justify-items-center gap-6 m-2"
+  >
     <ProductCompoent
       @delete-product="deleteProduct"
       @edit-product="openModalEdit"
@@ -49,6 +51,7 @@ export default {
   },
   methods: {
     async deleteProduct(id) {
+      console.log(id);
       await this.$userStore.dispatch("deleteProduct", id);
       this.getProducts();
     },
@@ -66,6 +69,7 @@ export default {
     async openModalEdit(id) {
       await this.$userStore.dispatch("getProduct", id);
       let data = this.$userStore.getters.getProduct;
+      console.log(data);
       this.product = data;
       this.isModalEditVisible = true;
     },

@@ -132,6 +132,9 @@
 </template>
 
 <script>
+import { ref } from "vue";
+import { useStore } from "vuex";
+
 export default {
   name: "ModalAdd",
   props: {
@@ -140,30 +143,41 @@ export default {
       required: true,
     },
   },
-  data: function () {
-    return {
-      productName: "",
-      productPrice: "",
-      productDescription: "",
-      productImage: "",
-    };
-  },
-  methods: {
-    closeModal() {
-      this.$emit("close-add");
-    },
+  setup(props, { emit }) {
+    const store = useStore();
+    const productName = ref("");
+    const productPrice = ref("");
+    const productDescription = ref("");
+    const productImage = ref("");
 
-    async addProduct() {
+    // Method to close the modal
+    function closeModal() {
+      emit("close-add");
+    }
+
+    // Method to add a new product
+    async function addProduct() {
       const data = {
-        name: this.productName,
-        price: this.productPrice,
-        description: this.productDescription,
-        image: this.productImage,
+        name: productName.value,
+        price: productPrice.value,
+        description: productDescription.value,
+        image: productImage.value,
       };
-      await this.$userStore.dispatch("addProduct", data);
-      this.closeModal();
-      this.$emit("product-added");
-    },
+
+      await store.dispatch("addProduct", data); // Dispatch the addProduct action from the store
+      closeModal();
+      emit("product-added"); // Emit the 'product-added' event
+    }
+
+    // Return the reactive data and methods so they can be used in the template
+    return {
+      productName,
+      productPrice,
+      productDescription,
+      productImage,
+      closeModal,
+      addProduct,
+    };
   },
 };
 </script>

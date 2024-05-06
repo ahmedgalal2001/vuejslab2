@@ -133,6 +133,8 @@
 </template>
 
 <script>
+import { ref } from "vue";
+import { useStore } from "vuex";
 export default {
   name: "ModalEdit",
   props: {
@@ -145,42 +147,38 @@ export default {
       required: true,
     },
   },
-  mounted() {
-    this.productName = this.product.name;
-    this.productPrice = this.product.price;
-    this.productDescription = this.product.description;
-    this.productImage = this.product.image;
-  },
-  data: function () {
-    return {
-      productName: "",
-      productPrice: "",
-      productDescription: "",
-      productImage: "",
-    };
-  },
-  methods: {
-    closeModal() {
-      this.$emit("close-edit");
-    },
+  setup(props, { emit }) {
+    const store = useStore();
+    console.log(props.product);
+    const productName = ref(props.product.name);
+    const productPrice = ref(props.product.price);
+    const productDescription = ref(props.product.description);
+    const productImage = ref(props.product.image);
 
-    editProduct() {
+    function closeModal() {
+      emit("close-edit");
+    }
+
+    async function editProduct() {
       const data = {
-        name: this.productName,
-        price: this.productPrice,
-        description: this.productDescription,
-        image: this.productImage,
+        id: props.product.id,
+        name: productName.value,
+        price: productPrice.value,
+        description: productDescription.value,
+        image: productImage.value,
       };
-      this.$axios
-        .put(`/products/${this.product.id}`, {
-          data: data,
-        })
-        .then((res) => {
-          console.log(res.data);
-          this.closeModal();
-          this.$emit("product-edited");
-        });
-    },
+      await store.dispatch("editProduct", data);
+      closeModal();
+      emit("product-edited");
+    }
+    return {
+      productName,
+      productPrice,
+      productDescription,
+      productImage,
+      closeModal,
+      editProduct,
+    };
   },
 };
 </script>

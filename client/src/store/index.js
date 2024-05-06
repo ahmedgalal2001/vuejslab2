@@ -28,6 +28,7 @@ export default createStore({
     },
 
     getProduct(state, product) {
+      console.log(product);
       state.product = product;
     },
 
@@ -50,9 +51,9 @@ export default createStore({
 
     async getProduct({ commit }, id) {
       try {
+        console.log(id);
         const res = await axiosInstance.get(`/products/${id}`);
         commit("getProduct", res.data);
-        return res.data;
       } catch (error) {
         console.error("Error fetching products:", error);
       }
